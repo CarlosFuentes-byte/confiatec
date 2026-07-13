@@ -108,6 +108,9 @@ export default async function DashboardPage() {
           </a>{" "}
           <a className="panel-action-link" href="/dashboard/wallet">
             Mi wallet →
+          </a>{" "}
+          <a className="panel-action-link" href="/dashboard/resenas">
+            Mis reseñas →
           </a>
         </div>
         <TopTechniciansRanking technicians={(topTechnicians as TechnicianListItem[]) ?? []} />

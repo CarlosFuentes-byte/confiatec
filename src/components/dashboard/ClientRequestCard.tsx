@@ -120,9 +120,9 @@ export default function ClientRequestCard({ request }: { request: ClientRequestR
       {request.status === "completed" &&
         request.technician_id &&
         (review ? (
-          <p className="request-card-meta" style={{ marginTop: "14px" }}>
-            Tu reseña: {"★".repeat(review.rating)} {review.comment}
-          </p>
+          <a className="panel-action-link" href="/dashboard/resenas" style={{ display: "block" }}>
+            Ya calificaste este servicio — ver en Mis reseñas →
+          </a>
         ) : (
           <ReviewForm
             requestId={request.id}

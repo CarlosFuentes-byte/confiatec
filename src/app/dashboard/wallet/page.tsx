@@ -26,7 +26,7 @@ export default async function WalletPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("wallet_balance")
+    .select("role, wallet_balance")
     .eq("id", user.id)
     .single();
 
@@ -52,7 +52,14 @@ export default async function WalletPage() {
           </div>
         </div>
 
-        <WalletTopUpForm />
+        {profile?.role === "client" ? (
+          <WalletTopUpForm />
+        ) : (
+          <p className="empty-state-small" style={{ marginBottom: "16px" }}>
+            Tu wallet es un registro de tus pagos recibidos y gastos en ConfiaTec — el saldo
+            crece con los servicios que completas, no se puede recargar manualmente.
+          </p>
+        )}
 
         <h3 style={{ fontSize: "16px", marginBottom: "8px" }}>Historial</h3>
         {transactions && transactions.length > 0 ? (
