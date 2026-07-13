@@ -2,6 +2,7 @@ const PRODUCT_LINKS = [
   { href: "#como-funciona", label: "Cómo funciona" },
   { href: "#servicios", label: "Servicios" },
   { href: "#confianza", label: "Seguridad" },
+  { href: "/precios", label: "Precios" },
   { href: "/terminos", label: "Términos y condiciones" },
 ];
 

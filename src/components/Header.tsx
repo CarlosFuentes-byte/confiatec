@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { href: "#servicios", label: "Servicios" },
   { href: "#tecnicos", label: "Para técnicos" },
   { href: "#confianza", label: "Seguridad" },
+  { href: "/precios", label: "Precios" },
 ];
 
 type HeaderUser = { id: string; role: "client" | "technician" | null } | null;

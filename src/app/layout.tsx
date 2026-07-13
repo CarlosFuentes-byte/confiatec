@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
@@ -28,6 +28,15 @@ export const metadata: Metadata = {
   title: "ConfiaTec — Tu técnico verificado, en minutos y a tu puerta",
   description:
     "ConfiaTec conecta hogares con electricistas, fontaneros y barberos verificados en San Pedro Sula y Tegucigalpa. Antecedentes revisados, ubicación en vivo y reseñas reales.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "ConfiaTec",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0B1E27",
 };
 
 export default async function RootLayout({
