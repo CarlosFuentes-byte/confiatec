@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { getInitials } from "@/lib/initials";
+import { fileExtension, getPublicFileUrl, uploadFile } from "@/lib/uploadFile";
 
 export default function AvatarUploader({
   userId,
@@ -28,21 +29,17 @@ export default function AvatarUploader({
     setUploading(true);
 
     const supabase = createClient();
-    const ext = file.name.split(".").pop();
-    const path = `${userId}/avatar.${ext}`;
+    const path = `${userId}/avatar.${fileExtension(file)}`;
 
-    const { error: uploadError } = await supabase.storage
-      .from("avatars")
-      .upload(path, file, { upsert: true });
-
-    if (uploadError) {
+    try {
+      await uploadFile(supabase, "avatars", path, file);
+    } catch (uploadError) {
       setUploading(false);
-      setError(uploadError.message);
+      setError(uploadError instanceof Error ? uploadError.message : "No se pudo subir la foto.");
       return;
     }
 
-    const { data } = supabase.storage.from("avatars").getPublicUrl(path);
-    const publicUrl = `${data.publicUrl}?t=${Date.now()}`;
+    const publicUrl = getPublicFileUrl(supabase, "avatars", path);
 
     const { error: profileError } = await supabase
       .from("profiles")

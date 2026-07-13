@@ -33,7 +33,7 @@ export default async function DashboardPage() {
   if (profile?.role === "technician") {
     const { data: technicianProfile } = await supabase
       .from("technician_profiles")
-      .select("profile_id, featured")
+      .select("profile_id, featured, verified")
       .eq("profile_id", user.id)
       .maybeSingle();
 
@@ -57,6 +57,13 @@ export default async function DashboardPage() {
               Editar mi perfil →
             </a>
           </div>
+          {technicianProfile.verified ? (
+            <div className="form-notice">✓ Cuenta verificada</div>
+          ) : (
+            <div className="form-notice" style={{ borderColor: "var(--gold)", color: "var(--gold)" }}>
+              Verificación en proceso — estamos revisando tus documentos.
+            </div>
+          )}
           <PremiumToggle profileId={user.id} featured={technicianProfile.featured} />
           {requests && requests.length > 0 ? (
             <div className="dash-grid">

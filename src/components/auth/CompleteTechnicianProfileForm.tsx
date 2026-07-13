@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { OTHER_CATEGORY_VALUE, resolveCategoryId } from "@/lib/resolveCategory";
+import { fileExtension, getPublicFileUrl, uploadFile } from "@/lib/uploadFile";
 import type { ServiceCategory } from "@/lib/supabase/types";
 
 export default function CompleteTechnicianProfileForm({
@@ -19,6 +20,9 @@ export default function CompleteTechnicianProfileForm({
   );
   const [customCategory, setCustomCategory] = useState("");
   const [bio, setBio] = useState("");
+  const [selfieFile, setSelfieFile] = useState<File | null>(null);
+  const [policeFile, setPoliceFile] = useState<File | null>(null);
+  const [criminalFile, setCriminalFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,6 +32,44 @@ export default function CompleteTechnicianProfileForm({
     setLoading(true);
 
     const supabase = createClient();
+
+    if (selfieFile) {
+      try {
+        const path = `${profileId}/avatar.${fileExtension(selfieFile)}`;
+        await uploadFile(supabase, "avatars", path, selfieFile);
+        const avatarUrl = getPublicFileUrl(supabase, "avatars", path);
+        await supabase.from("profiles").update({ avatar_url: avatarUrl }).eq("id", profileId);
+      } catch (avatarError) {
+        setLoading(false);
+        setError(
+          avatarError instanceof Error
+            ? avatarError.message
+            : "No se pudo subir tu foto de perfil."
+        );
+        return;
+      }
+    }
+
+    let policeRecordPath: string | null = null;
+    let criminalRecordPath: string | null = null;
+    try {
+      if (policeFile) {
+        policeRecordPath = `${profileId}/policial.${fileExtension(policeFile)}`;
+        await uploadFile(supabase, "verification-docs", policeRecordPath, policeFile);
+      }
+      if (criminalFile) {
+        criminalRecordPath = `${profileId}/penales.${fileExtension(criminalFile)}`;
+        await uploadFile(supabase, "verification-docs", criminalRecordPath, criminalFile);
+      }
+    } catch (docError) {
+      setLoading(false);
+      setError(
+        docError instanceof Error
+          ? docError.message
+          : "No se pudieron subir tus documentos de verificación."
+      );
+      return;
+    }
 
     let resolvedCategoryId: number;
     try {
@@ -46,6 +88,9 @@ export default function CompleteTechnicianProfileForm({
       profile_id: profileId,
       category_id: resolvedCategoryId,
       bio,
+      police_record_url: policeRecordPath,
+      criminal_record_url: criminalRecordPath,
+      verification_submitted_at: new Date().toISOString(),
     });
 
     setLoading(false);
@@ -122,6 +167,56 @@ export default function CompleteTechnicianProfileForm({
             required
             value={bio}
             onChange={(e) => setBio(e.target.value)}
+          />
+        </div>
+
+        <div style={{ margin: "24px 0 16px" }}>
+          <span className="eyebrow">Verificación de identidad</span>
+          <p style={{ marginTop: "8px", fontSize: "13.5px", color: "var(--text-muted)" }}>
+            Revisamos estos documentos manualmente antes de activar tu insignia
+            &ldquo;Verificado&rdquo; — le da más confianza a los clientes.
+          </p>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label" htmlFor="selfie">
+            Foto de perfil (selfie)
+          </label>
+          <input
+            id="selfie"
+            className="form-input"
+            type="file"
+            accept="image/*"
+            required
+            onChange={(e) => setSelfieFile(e.target.files?.[0] ?? null)}
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="form-label" htmlFor="policeRecord">
+            Hoja de Antecedentes Policiales
+          </label>
+          <input
+            id="policeRecord"
+            className="form-input"
+            type="file"
+            accept="image/*,application/pdf"
+            required
+            onChange={(e) => setPoliceFile(e.target.files?.[0] ?? null)}
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="form-label" htmlFor="criminalRecord">
+            Certificado de Antecedentes Penales
+          </label>
+          <input
+            id="criminalRecord"
+            className="form-input"
+            type="file"
+            accept="image/*,application/pdf"
+            required
+            onChange={(e) => setCriminalFile(e.target.files?.[0] ?? null)}
           />
         </div>
 

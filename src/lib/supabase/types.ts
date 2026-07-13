@@ -24,6 +24,9 @@ export type TechnicianProfile = {
   featured: boolean;
   rating_avg: number;
   completed_count: number;
+  police_record_url: string | null;
+  criminal_record_url: string | null;
+  verification_submitted_at: string | null;
 };
 
 export type TechnicianListItem = TechnicianProfile & {
