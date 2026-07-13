@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import ReviewForm from "./ReviewForm";
 import TechnicianLocationMap from "./TechnicianLocationMap";
+import ConversationView from "./ConversationView";
 import type { ClientRequestRow } from "@/lib/supabase/types";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -55,12 +56,17 @@ export default function ClientRequestCard({ request }: { request: ClientRequestR
         </div>
       )}
 
-      {request.status === "accepted" && (
-        <TechnicianLocationMap
-          requestId={request.id}
-          initialLat={request.technician_lat}
-          initialLng={request.technician_lng}
-        />
+      {request.status === "accepted" ? (
+        <div className="request-interaction">
+          <TechnicianLocationMap
+            requestId={request.id}
+            initialLat={request.technician_lat}
+            initialLng={request.technician_lng}
+          />
+          <ConversationView requestId={request.id} currentUserId={request.client_id} compact />
+        </div>
+      ) : (
+        <ConversationView requestId={request.id} currentUserId={request.client_id} compact />
       )}
 
       {request.status === "completed" &&
@@ -76,10 +82,6 @@ export default function ClientRequestCard({ request }: { request: ClientRequestR
             technicianId={request.technician_id}
           />
         ))}
-
-      <a className="panel-action-link" href={`/dashboard/solicitud/${request.id}`}>
-        Mensajes →
-      </a>
     </div>
   );
 }

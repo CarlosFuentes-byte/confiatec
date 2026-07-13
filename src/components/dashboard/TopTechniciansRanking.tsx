@@ -23,7 +23,16 @@ export default function TopTechniciansRanking({
       {technicians.map((t, i) => (
         <div className="rank-row" key={t.profile_id}>
           <span className="rank-pos">{String(i + 1).padStart(2, "0")}</span>
-          <div className="rank-avatar">{getInitials(t.profiles.full_name)}</div>
+          {t.profiles.avatar_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={t.profiles.avatar_url}
+              alt={t.profiles.full_name}
+              className="rank-avatar avatar-img"
+            />
+          ) : (
+            <div className="rank-avatar">{getInitials(t.profiles.full_name)}</div>
+          )}
           <div className="rank-name">
             {t.profiles.full_name}
             <span>

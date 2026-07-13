@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import StaticLocationMap from "./StaticLocationMap";
+import ConversationView from "./ConversationView";
 import type { RequestStatus, TechnicianRequestRow } from "@/lib/supabase/types";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -91,8 +92,21 @@ export default function TechnicianRequestCard({
       </div>
       <p className="request-card-address">{request.address_text}</p>
 
-      {request.client_lat != null && request.client_lng != null && (
-        <StaticLocationMap lat={request.client_lat} lng={request.client_lng} />
+      {request.client_lat != null && request.client_lng != null ? (
+        <div className="request-interaction">
+          <StaticLocationMap lat={request.client_lat} lng={request.client_lng} />
+          <ConversationView
+            requestId={request.id}
+            currentUserId={request.technician_id!}
+            compact
+          />
+        </div>
+      ) : (
+        <ConversationView
+          requestId={request.id}
+          currentUserId={request.technician_id!}
+          compact
+        />
       )}
 
       {request.status === "accepted" && sharingLocation && (
@@ -132,10 +146,6 @@ export default function TechnicianRequestCard({
           </button>
         </div>
       )}
-
-      <a className="panel-action-link" href={`/dashboard/solicitud/${request.id}`}>
-        Mensajes →
-      </a>
     </div>
   );
 }

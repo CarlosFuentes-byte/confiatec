@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { CITIES } from "@/lib/cities";
 import { OTHER_CATEGORY_VALUE, resolveCategoryId } from "@/lib/resolveCategory";
+import AvatarUploader from "@/components/AvatarUploader";
 import type { Profile, ServiceCategory, TechnicianProfile } from "@/lib/supabase/types";
 
 export default function EditTechnicianProfileForm({
@@ -81,6 +82,8 @@ export default function EditTechnicianProfileForm({
       <p className="form-subtitle">Actualiza tus datos y cómo apareces en las búsquedas.</p>
 
       {error && <div className="form-error">{error}</div>}
+
+      <AvatarUploader userId={profile.id} fullName={profile.full_name} avatarUrl={profile.avatar_url} />
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">

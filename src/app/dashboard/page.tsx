@@ -82,7 +82,7 @@ export default async function DashboardPage() {
 
   const { data: topTechnicians } = await supabase
     .from("technician_profiles")
-    .select("*, profiles(full_name, city), service_categories(name, icon_slug)")
+    .select("*, profiles(full_name, city, avatar_url), service_categories(name, icon_slug)")
     .order("rating_avg", { ascending: false })
     .order("completed_count", { ascending: false })
     .limit(5);
@@ -93,6 +93,9 @@ export default async function DashboardPage() {
         <div className="sec-head">
           <span className="eyebrow">Mi panel</span>
           <h2>Mis solicitudes</h2>
+          <a className="panel-action-link" href="/dashboard/perfil">
+            Editar mi perfil →
+          </a>
         </div>
         <TopTechniciansRanking technicians={(topTechnicians as TechnicianListItem[]) ?? []} />
         {requests && requests.length > 0 ? (

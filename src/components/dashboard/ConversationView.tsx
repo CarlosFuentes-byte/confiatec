@@ -9,13 +9,13 @@ const POLL_INTERVAL_MS = 3000;
 export default function ConversationView({
   requestId,
   currentUserId,
-  initialMessages,
+  compact = false,
 }: {
   requestId: string;
   currentUserId: string;
-  initialMessages: Message[];
+  compact?: boolean;
 }) {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [body, setBody] = useState("");
   const [sending, setSending] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -33,6 +33,7 @@ export default function ConversationView({
       if (data) setMessages(data as Message[]);
     };
 
+    poll();
     const interval = setInterval(poll, POLL_INTERVAL_MS);
     return () => clearInterval(interval);
   }, [requestId]);
@@ -60,7 +61,7 @@ export default function ConversationView({
   };
 
   return (
-    <div className="chat-container">
+    <div className={`chat-container ${compact ? "chat-container-compact" : ""}`}>
       <div className="chat-messages" ref={scrollRef}>
         {messages.length === 0 && (
           <p className="chat-empty">Todavía no hay mensajes. Escribe el primero.</p>

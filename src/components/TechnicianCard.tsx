@@ -6,9 +6,16 @@ export default function TechnicianCard({ technician }: { technician: TechnicianL
   return (
     <Link className="tech-card" href={`/tecnico/${technician.profile_id}`}>
       <div className="tech-card-head">
-        <div className="tech-card-avatar">
-          {getInitials(technician.profiles.full_name)}
-        </div>
+        {technician.profiles.avatar_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={technician.profiles.avatar_url}
+            alt={technician.profiles.full_name}
+            className="tech-card-avatar avatar-img"
+          />
+        ) : (
+          <div className="tech-card-avatar">{getInitials(technician.profiles.full_name)}</div>
+        )}
         <div>
           <div className="tech-card-name">{technician.profiles.full_name}</div>
           <div className="tech-card-meta">

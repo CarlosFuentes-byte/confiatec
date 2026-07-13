@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import EditTechnicianProfileForm from "@/components/auth/EditTechnicianProfileForm";
+import EditClientProfileForm from "@/components/auth/EditClientProfileForm";
 import type { Profile, ServiceCategory, TechnicianProfile } from "@/lib/supabase/types";
 
 export const metadata: Metadata = {
@@ -23,7 +24,17 @@ export default async function EditProfilePage() {
     .eq("id", user.id)
     .single();
 
-  if (profile?.role !== "technician") redirect("/dashboard");
+  if (!profile) redirect("/login");
+
+  if (profile.role === "client") {
+    return (
+      <section className="auth-page">
+        <div className="wrap">
+          <EditClientProfileForm profile={profile as Profile} />
+        </div>
+      </section>
+    );
+  }
 
   const { data: technicianProfile } = await supabase
     .from("technician_profiles")

@@ -34,7 +34,7 @@ export default async function TecnicoProfilePage({
 
   const { data: technician } = await supabase
     .from("technician_profiles")
-    .select("*, profiles(full_name, city), service_categories(name, icon_slug)")
+    .select("*, profiles(full_name, city, avatar_url), service_categories(name, icon_slug)")
     .eq("profile_id", id)
     .maybeSingle();
 
@@ -66,7 +66,16 @@ export default async function TecnicoProfilePage({
     <section className="auth-page">
       <div className="wrap" style={{ maxWidth: "720px" }}>
         <div className="tech-profile-head">
-          <div className="tech-profile-avatar">{getInitials(tech.profiles.full_name)}</div>
+          {tech.profiles.avatar_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={tech.profiles.avatar_url}
+              alt={tech.profiles.full_name}
+              className="tech-profile-avatar avatar-img"
+            />
+          ) : (
+            <div className="tech-profile-avatar">{getInitials(tech.profiles.full_name)}</div>
+          )}
           <div>
             <h1>{tech.profiles.full_name}</h1>
             <div className="tech-card-meta">

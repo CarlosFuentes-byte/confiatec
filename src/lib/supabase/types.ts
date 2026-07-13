@@ -13,6 +13,7 @@ export type Profile = {
   phone: string | null;
   city: City | null;
   accepted_terms_at: string | null;
+  avatar_url: string | null;
 };
 
 export type TechnicianProfile = {
@@ -26,7 +27,7 @@ export type TechnicianProfile = {
 };
 
 export type TechnicianListItem = TechnicianProfile & {
-  profiles: Pick<Profile, "full_name" | "city">;
+  profiles: Pick<Profile, "full_name" | "city" | "avatar_url">;
   service_categories: Pick<ServiceCategory, "name" | "icon_slug">;
 };
 

@@ -24,7 +24,7 @@ export default async function BuscarPage({
   let query = supabase
     .from("technician_profiles")
     .select(
-      "*, profiles!inner(full_name, city), service_categories(name, icon_slug)"
+      "*, profiles!inner(full_name, city, avatar_url), service_categories(name, icon_slug)"
     )
     .order("featured", { ascending: false })
     .order("rating_avg", { ascending: false })
