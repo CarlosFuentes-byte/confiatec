@@ -55,6 +55,9 @@ export default async function DashboardPage() {
             <h2>Solicitudes recibidas</h2>
             <a className="panel-action-link" href="/dashboard/perfil">
               Editar mi perfil →
+            </a>{" "}
+            <a className="panel-action-link" href="/dashboard/wallet">
+              Mi wallet →
             </a>
           </div>
           {technicianProfile.verified ? (
@@ -102,6 +105,9 @@ export default async function DashboardPage() {
           <h2>Mis solicitudes</h2>
           <a className="panel-action-link" href="/dashboard/perfil">
             Editar mi perfil →
+          </a>{" "}
+          <a className="panel-action-link" href="/dashboard/wallet">
+            Mi wallet →
           </a>
         </div>
         <TopTechniciansRanking technicians={(topTechnicians as TechnicianListItem[]) ?? []} />

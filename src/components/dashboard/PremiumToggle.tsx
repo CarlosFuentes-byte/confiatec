@@ -13,14 +13,28 @@ export default function PremiumToggle({
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const toggle = async () => {
+  const activate = async () => {
     setLoading(true);
+    setError(null);
     const supabase = createClient();
-    await supabase
-      .from("technician_profiles")
-      .update({ featured: !featured })
-      .eq("profile_id", profileId);
+    const { error: rpcError } = await supabase.rpc("activate_premium");
+    setLoading(false);
+
+    if (rpcError) {
+      setError(rpcError.message);
+      return;
+    }
+
+    router.refresh();
+  };
+
+  const cancel = async () => {
+    setLoading(true);
+    setError(null);
+    const supabase = createClient();
+    await supabase.from("technician_profiles").update({ featured: false }).eq("profile_id", profileId);
     setLoading(false);
     router.refresh();
   };
@@ -40,13 +54,20 @@ export default function PremiumToggle({
         </div>
         {featured && <span className="badge-featured">Destacado</span>}
       </div>
+
+      {error && (
+        <div className="form-error" style={{ marginTop: "14px" }}>
+          {error} — <a href="/dashboard/wallet">recarga tu wallet</a>.
+        </div>
+      )}
+
       <div className="request-actions">
         {featured ? (
-          <button className="btn btn-danger btn-sm" disabled={loading} onClick={toggle}>
+          <button className="btn btn-danger btn-sm" disabled={loading} onClick={cancel}>
             Cancelar Premium
           </button>
         ) : (
-          <button className="btn btn-primary btn-sm" disabled={loading} onClick={toggle}>
+          <button className="btn btn-primary btn-sm" disabled={loading} onClick={activate}>
             Hazte Premium — L. 300/mes
           </button>
         )}

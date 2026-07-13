@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import ReviewForm from "./ReviewForm";
@@ -18,6 +18,8 @@ const STATUS_LABEL: Record<string, string> = {
 export default function ClientRequestCard({ request }: { request: ClientRequestRow }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [amount, setAmount] = useState("");
+  const [payError, setPayError] = useState<string | null>(null);
 
   const cancel = async () => {
     setLoading(true);
@@ -30,14 +32,25 @@ export default function ClientRequestCard({ request }: { request: ClientRequestR
     router.refresh();
   };
 
-  const complete = async () => {
+  const completeAndPay = async (e: FormEvent) => {
+    e.preventDefault();
+    const value = Number(amount);
+    if (!value || value <= 0) return;
+
     setLoading(true);
+    setPayError(null);
     const supabase = createClient();
-    await supabase
-      .from("service_requests")
-      .update({ status: "completed" })
-      .eq("id", request.id);
+    const { error } = await supabase.rpc("complete_and_pay", {
+      p_request_id: request.id,
+      p_amount: value,
+    });
     setLoading(false);
+
+    if (error) {
+      setPayError(error.message);
+      return;
+    }
+
     router.refresh();
   };
 
@@ -77,11 +90,28 @@ export default function ClientRequestCard({ request }: { request: ClientRequestR
             />
             <ConversationView requestId={request.id} currentUserId={request.client_id} compact />
           </div>
-          <div className="request-actions">
-            <button className="btn btn-primary btn-sm" disabled={loading} onClick={complete}>
-              Marcar como completado
+
+          {payError && (
+            <div className="form-error" style={{ marginTop: "14px" }}>
+              {payError} — <a href="/dashboard/wallet">recarga tu wallet</a>.
+            </div>
+          )}
+
+          <form onSubmit={completeAndPay} style={{ marginTop: "16px", display: "flex", gap: "10px" }}>
+            <input
+              className="form-input"
+              type="number"
+              min="1"
+              step="1"
+              required
+              placeholder="Monto a pagar (L.)"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+            <button className="btn btn-primary btn-sm" type="submit" disabled={loading}>
+              Pagar y completar
             </button>
-          </div>
+          </form>
         </>
       ) : (
         <ConversationView requestId={request.id} currentUserId={request.client_id} compact />

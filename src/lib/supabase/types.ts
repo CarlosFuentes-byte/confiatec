@@ -14,6 +14,19 @@ export type Profile = {
   city: City | null;
   accepted_terms_at: string | null;
   avatar_url: string | null;
+  wallet_balance: number;
+};
+
+export type WalletTransactionType = "topup" | "payment_sent" | "payment_received" | "premium";
+
+export type WalletTransaction = {
+  id: string;
+  profile_id: string;
+  amount: number;
+  type: WalletTransactionType;
+  service_request_id: string | null;
+  description: string | null;
+  created_at: string;
 };
 
 export type TechnicianProfile = {
