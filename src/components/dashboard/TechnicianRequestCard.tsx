@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import StaticLocationMap from "./StaticLocationMap";
 import type { RequestStatus, TechnicianRequestRow } from "@/lib/supabase/types";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -90,6 +91,10 @@ export default function TechnicianRequestCard({
       </div>
       <p className="request-card-address">{request.address_text}</p>
 
+      {request.client_lat != null && request.client_lng != null && (
+        <StaticLocationMap lat={request.client_lat} lng={request.client_lng} />
+      )}
+
       {request.status === "accepted" && sharingLocation && (
         <div className="location-status">Compartiendo tu ubicación en vivo</div>
       )}
@@ -127,6 +132,10 @@ export default function TechnicianRequestCard({
           </button>
         </div>
       )}
+
+      <a className="panel-action-link" href={`/dashboard/solicitud/${request.id}`}>
+        Mensajes →
+      </a>
     </div>
   );
 }

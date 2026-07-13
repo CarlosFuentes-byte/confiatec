@@ -15,9 +15,32 @@ export default function RequestServiceForm({
 }) {
   const router = useRouter();
   const [address, setAddress] = useState("");
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [locating, setLocating] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+
+  const captureLocation = () => {
+    if (!("geolocation" in navigator)) {
+      setLocationError("Tu navegador no soporta geolocalización.");
+      return;
+    }
+    setLocating(true);
+    setLocationError(null);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setCoords({ lat: position.coords.latitude, lng: position.coords.longitude });
+        setLocating(false);
+      },
+      () => {
+        setLocationError("No pudimos acceder a tu ubicación. Puedes seguir con solo la dirección.");
+        setLocating(false);
+      },
+      { enableHighAccuracy: true }
+    );
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -30,6 +53,8 @@ export default function RequestServiceForm({
       technician_id: technicianId,
       category_id: categoryId,
       address_text: address,
+      client_lat: coords?.lat ?? null,
+      client_lng: coords?.lng ?? null,
     });
 
     setLoading(false);
@@ -75,6 +100,27 @@ export default function RequestServiceForm({
             onChange={(e) => setAddress(e.target.value)}
           />
         </div>
+
+        <div className="form-group">
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm"
+            onClick={captureLocation}
+            disabled={locating}
+          >
+            {locating
+              ? "Ubicando..."
+              : coords
+                ? "Ubicación capturada ✓"
+                : "Usar mi ubicación actual"}
+          </button>
+          {locationError && (
+            <p className="location-error" style={{ marginTop: "8px" }}>
+              {locationError}
+            </p>
+          )}
+        </div>
+
         <button className="btn btn-primary btn-block" type="submit" disabled={loading}>
           {loading ? "Enviando..." : "Enviar solicitud"}
         </button>

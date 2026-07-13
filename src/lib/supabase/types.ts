@@ -54,6 +54,16 @@ export type ServiceRequest = {
   technician_lat: number | null;
   technician_lng: number | null;
   location_updated_at: string | null;
+  client_lat: number | null;
+  client_lng: number | null;
+};
+
+export type Message = {
+  id: string;
+  service_request_id: string;
+  sender_id: string;
+  body: string;
+  created_at: string;
 };
 
 export type ClientRequestRow = ServiceRequest & {

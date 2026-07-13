@@ -76,6 +76,10 @@ export default function ClientRequestCard({ request }: { request: ClientRequestR
             technicianId={request.technician_id}
           />
         ))}
+
+      <a className="panel-action-link" href={`/dashboard/solicitud/${request.id}`}>
+        Mensajes →
+      </a>
     </div>
   );
 }
