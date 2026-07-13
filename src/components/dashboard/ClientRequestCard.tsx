@@ -30,6 +30,17 @@ export default function ClientRequestCard({ request }: { request: ClientRequestR
     router.refresh();
   };
 
+  const complete = async () => {
+    setLoading(true);
+    const supabase = createClient();
+    await supabase
+      .from("service_requests")
+      .update({ status: "completed" })
+      .eq("id", request.id);
+    setLoading(false);
+    router.refresh();
+  };
+
   const review = request.reviews?.[0];
 
   return (
@@ -57,14 +68,21 @@ export default function ClientRequestCard({ request }: { request: ClientRequestR
       )}
 
       {request.status === "accepted" ? (
-        <div className="request-interaction">
-          <TechnicianLocationMap
-            requestId={request.id}
-            initialLat={request.technician_lat}
-            initialLng={request.technician_lng}
-          />
-          <ConversationView requestId={request.id} currentUserId={request.client_id} compact />
-        </div>
+        <>
+          <div className="request-interaction">
+            <TechnicianLocationMap
+              requestId={request.id}
+              initialLat={request.technician_lat}
+              initialLng={request.technician_lng}
+            />
+            <ConversationView requestId={request.id} currentUserId={request.client_id} compact />
+          </div>
+          <div className="request-actions">
+            <button className="btn btn-primary btn-sm" disabled={loading} onClick={complete}>
+              Marcar como completado
+            </button>
+          </div>
+        </>
       ) : (
         <ConversationView requestId={request.id} currentUserId={request.client_id} compact />
       )}

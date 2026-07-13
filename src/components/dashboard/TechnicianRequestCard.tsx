@@ -136,15 +136,9 @@ export default function TechnicianRequestCard({
       )}
 
       {request.status === "accepted" && (
-        <div className="request-actions">
-          <button
-            className="btn btn-primary btn-sm"
-            disabled={loading}
-            onClick={() => updateStatus("completed")}
-          >
-            Marcar como completado
-          </button>
-        </div>
+        <p className="request-card-meta" style={{ marginTop: "14px" }}>
+          Esperando a que el cliente confirme que el trabajo fue completado.
+        </p>
       )}
     </div>
   );
