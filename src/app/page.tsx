@@ -1,10 +1,6 @@
-import Hero from "@/components/Hero";
-import HowItWorks from "@/components/HowItWorks";
-import Services from "@/components/Services";
-import ForTechnicians from "@/components/ForTechnicians";
-import Trust from "@/components/Trust";
+import HomeLanding from "@/components/HomeLanding";
 import { createClient } from "@/lib/supabase/server";
-import type { ServiceCategory } from "@/lib/supabase/types";
+import type { ServiceCategory, TechnicianListItem } from "@/lib/supabase/types";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -13,13 +9,18 @@ export default async function Home() {
     .select("id, name, icon_slug")
     .order("id");
 
+  const { data: technicians } = await supabase
+    .from("technician_profiles")
+    .select("*, profiles!inner(full_name, city, avatar_url), service_categories(name, icon_slug)")
+    .order("featured", { ascending: false })
+    .order("rating_avg", { ascending: false })
+    .order("completed_count", { ascending: false })
+    .limit(3);
+
   return (
-    <>
-      <Hero categories={(categories as ServiceCategory[]) ?? []} />
-      <HowItWorks />
-      <Services />
-      <ForTechnicians />
-      <Trust />
-    </>
+    <HomeLanding
+      categories={(categories as ServiceCategory[]) ?? []}
+      technicians={(technicians as TechnicianListItem[]) ?? []}
+    />
   );
 }

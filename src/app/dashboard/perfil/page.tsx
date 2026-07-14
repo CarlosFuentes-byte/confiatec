@@ -27,13 +27,7 @@ export default async function EditProfilePage() {
   if (!profile) redirect("/login");
 
   if (profile.role === "client") {
-    return (
-      <section className="auth-page">
-        <div className="wrap">
-          <EditClientProfileForm profile={profile as Profile} />
-        </div>
-      </section>
-    );
+    return <EditClientProfileForm profile={profile as Profile} />;
   }
 
   const { data: technicianProfile } = await supabase
@@ -50,14 +44,10 @@ export default async function EditProfilePage() {
     .order("name");
 
   return (
-    <section className="auth-page">
-      <div className="wrap">
-        <EditTechnicianProfileForm
-          profile={profile as Profile}
-          technicianProfile={technicianProfile as TechnicianProfile}
-          categories={(categories as ServiceCategory[]) ?? []}
-        />
-      </div>
-    </section>
+    <EditTechnicianProfileForm
+      profile={profile as Profile}
+      technicianProfile={technicianProfile as TechnicianProfile}
+      categories={(categories as ServiceCategory[]) ?? []}
+    />
   );
 }

@@ -38,12 +38,11 @@ export default async function WalletPage() {
     .limit(30);
 
   return (
-    <section className="auth-page">
-      <div className="wrap" style={{ maxWidth: "640px" }}>
-        <div className="sec-head" style={{ marginBottom: "24px" }}>
-          <span className="eyebrow">Mi wallet</span>
-          <h2>Saldo y movimientos</h2>
-        </div>
+    <div style={{ maxWidth: "640px" }}>
+      <div className="sec-head" style={{ marginBottom: "24px" }}>
+        <span className="eyebrow">Mi wallet</span>
+        <h2>Saldo y movimientos</h2>
+      </div>
 
         <div className="wallet-balance-card">
           <div className="wallet-balance-label">Saldo disponible</div>
@@ -87,7 +86,6 @@ export default async function WalletPage() {
         ) : (
           <p className="empty-state-small">Todavía no tienes movimientos.</p>
         )}
-      </div>
-    </section>
+    </div>
   );
 }

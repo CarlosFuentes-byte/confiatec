@@ -38,33 +38,31 @@ export default async function MyReviewsPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <section className="auth-page">
-      <div className="wrap" style={{ maxWidth: "640px" }}>
-        <div className="sec-head" style={{ marginBottom: "24px" }}>
-          <span className="eyebrow">Mis reseñas</span>
-          <h2>Técnicos que has calificado</h2>
-        </div>
-
-        {reviews && reviews.length > 0 ? (
-          <div className="form-card" style={{ maxWidth: "100%" }}>
-            {(reviews as MyReview[]).map((review) => (
-              <div className="review-card" key={review.id}>
-                <div className="review-rating">{"★".repeat(review.rating)}</div>
-                {review.comment && <p className="tech-card-bio">{review.comment}</p>}
-                <div className="tech-card-meta">
-                  {review.technician.full_name} ·{" "}
-                  {new Date(review.created_at).toLocaleDateString("es-HN")}
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="empty-state-small">
-            Todavía no has dejado ninguna reseña. Se te pedirá una cada vez que completes y
-            pagues un servicio.
-          </p>
-        )}
+    <div style={{ maxWidth: "640px" }}>
+      <div className="sec-head" style={{ marginBottom: "24px" }}>
+        <span className="eyebrow">Mis reseñas</span>
+        <h2>Técnicos que has calificado</h2>
       </div>
-    </section>
+
+      {reviews && reviews.length > 0 ? (
+        <div className="form-card" style={{ maxWidth: "100%" }}>
+          {(reviews as MyReview[]).map((review) => (
+            <div className="review-card" key={review.id}>
+              <div className="review-rating">{"★".repeat(review.rating)}</div>
+              {review.comment && <p className="tech-card-bio">{review.comment}</p>}
+              <div className="tech-card-meta">
+                {review.technician.full_name} ·{" "}
+                {new Date(review.created_at).toLocaleDateString("es-HN")}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="empty-state-small">
+          Todavía no has dejado ninguna reseña. Se te pedirá una cada vez que completes y
+          pagues un servicio.
+        </p>
+      )}
+    </div>
   );
 }

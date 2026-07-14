@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { getInitials } from "@/lib/initials";
 import StaticLocationMap from "./StaticLocationMap";
 import ConversationView from "./ConversationView";
 import type { RequestStatus, TechnicianRequestRow } from "@/lib/supabase/types";
@@ -77,69 +78,92 @@ export default function TechnicianRequestCard({
   }, [request.status, request.id]);
 
   return (
-    <div className="request-card">
-      <div className="request-card-head">
-        <div>
-          <div className="request-card-title">{request.service_categories.name}</div>
-          <div className="request-card-meta">
-            Cliente: {request.client.full_name} ·{" "}
-            {new Date(request.created_at).toLocaleDateString("es-HN")}
+    <>
+      <div className="dp-dhead">
+        <div className="dp-who">
+          <div className="dp-davatar">{getInitials(request.client.full_name)}</div>
+          <div>
+            <div className="dp-dname">{request.client.full_name}</div>
+            <div className="dp-dmeta">{request.service_categories.name}</div>
           </div>
         </div>
         <span className={`status-badge status-${request.status}`}>
           {STATUS_LABEL[request.status]}
         </span>
       </div>
-      <p className="request-card-address">{request.address_text}</p>
 
-      {request.client_lat != null && request.client_lng != null ? (
-        <div className="request-interaction">
-          <StaticLocationMap lat={request.client_lat} lng={request.client_lng} />
-          <ConversationView
-            requestId={request.id}
-            currentUserId={request.technician_id!}
-            compact
-          />
-        </div>
-      ) : (
-        <ConversationView
-          requestId={request.id}
-          currentUserId={request.technician_id!}
-          compact
-        />
-      )}
-
-      {request.status === "accepted" && sharingLocation && (
-        <div className="location-status">Compartiendo tu ubicación en vivo</div>
-      )}
-      {request.status === "accepted" && locationError && (
-        <div className="location-error">{locationError}</div>
-      )}
+      <div className="dp-addr">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z" />
+          <circle cx="12" cy="10" r="2.5" />
+        </svg>
+        {request.address_text}
+      </div>
 
       {request.status === "pending" && (
-        <div className="request-actions">
-          <button
-            className="btn btn-primary btn-sm"
-            disabled={loading}
-            onClick={() => updateStatus("accepted")}
-          >
-            Aceptar
-          </button>
-          <button
-            className="btn btn-danger btn-sm"
-            disabled={loading}
-            onClick={() => updateStatus("cancelled")}
-          >
-            Rechazar
-          </button>
-        </div>
+        <>
+          <div className="dp-empty-detail">Nueva solicitud esperando tu respuesta.</div>
+          <div className="request-actions">
+            <button
+              className="btn btn-primary btn-sm"
+              disabled={loading}
+              onClick={() => updateStatus("accepted")}
+            >
+              Aceptar
+            </button>
+            <button
+              className="btn btn-danger btn-sm"
+              disabled={loading}
+              onClick={() => updateStatus("cancelled")}
+            >
+              Rechazar
+            </button>
+          </div>
+        </>
       )}
 
       {request.status === "accepted" && (
-        <p className="request-card-meta" style={{ marginTop: "14px" }}>
-          Esperando a que el cliente confirme que el trabajo fue completado.
-        </p>
+        <>
+          {sharingLocation && (
+            <div className="location-status">Compartiendo tu ubicación en vivo con el cliente</div>
+          )}
+          {locationError && <div className="location-error">{locationError}</div>}
+
+          {request.client_lat != null && request.client_lng != null ? (
+            <div className="request-interaction" style={{ marginTop: "16px" }}>
+              <StaticLocationMap lat={request.client_lat} lng={request.client_lng} />
+              <ConversationView
+                requestId={request.id}
+                currentUserId={request.technician_id!}
+                compact
+              />
+            </div>
+          ) : (
+            <div style={{ marginTop: "16px" }}>
+              <ConversationView
+                requestId={request.id}
+                currentUserId={request.technician_id!}
+                compact
+              />
+            </div>
+          )}
+
+          <p className="dp-li-sub" style={{ marginTop: "14px" }}>
+            Esperando a que el cliente confirme que el trabajo fue completado.
+          </p>
+        </>
       )}
-    </div>
+
+      {request.status === "completed" && (
+        <div className="dp-empty-detail">
+          Servicio completado el {new Date(request.created_at).toLocaleDateString("es-HN")}. Buen
+          trabajo.
+        </div>
+      )}
+
+      {request.status === "cancelled" && (
+        <div className="dp-empty-detail">Esta solicitud fue rechazada.</div>
+      )}
+    </>
   );
 }

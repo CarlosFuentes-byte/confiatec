@@ -3,17 +3,19 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { getInitials } from "@/lib/initials";
 import ReviewForm from "./ReviewForm";
 import TechnicianLocationMap from "./TechnicianLocationMap";
 import ConversationView from "./ConversationView";
 import type { ClientRequestRow } from "@/lib/supabase/types";
 
-const STATUS_LABEL: Record<string, string> = {
-  pending: "Pendiente",
-  accepted: "Aceptada",
-  completed: "Completada",
-  cancelled: "Cancelada",
-};
+const STEP_INDEX: Record<string, number> = { pending: 0, accepted: 1, completed: 2 };
+
+function stepClass(stepIdx: number, current: number) {
+  if (stepIdx < current) return "dp-step done";
+  if (stepIdx === current) return "dp-step current";
+  return "dp-step";
+}
 
 export default function ClientRequestCard({ request }: { request: ClientRequestRow }) {
   const router = useRouter();
@@ -55,32 +57,61 @@ export default function ClientRequestCard({ request }: { request: ClientRequestR
   };
 
   const review = request.reviews?.[0];
+  const current = STEP_INDEX[request.status] ?? 0;
+  const techName = request.technician?.full_name ?? "Sin asignar";
 
   return (
-    <div className="request-card">
-      <div className="request-card-head">
-        <div>
-          <div className="request-card-title">{request.service_categories.name}</div>
-          <div className="request-card-meta">
-            Técnico: {request.technician?.full_name ?? "Sin asignar"} ·{" "}
-            {new Date(request.created_at).toLocaleDateString("es-HN")}
+    <>
+      <div className="dp-dhead">
+        <div className="dp-who">
+          <div className="dp-davatar">{getInitials(techName)}</div>
+          <div>
+            <div className="dp-dname">{techName}</div>
+            <div className="dp-dmeta">{request.service_categories.name}</div>
           </div>
         </div>
-        <span className={`status-badge status-${request.status}`}>
-          {STATUS_LABEL[request.status]}
-        </span>
+        {request.status !== "cancelled" && (
+          <div className="dp-stepper">
+            <div className={stepClass(0, current)}>
+              <span className="dot" />
+              Pedido
+            </div>
+            <div className="dp-stepline" />
+            <div className={stepClass(1, current)}>
+              <span className="dot" />
+              En camino
+            </div>
+            <div className="dp-stepline" />
+            <div className={stepClass(2, current)}>
+              <span className="dot" />
+              Completado
+            </div>
+          </div>
+        )}
       </div>
-      <p className="request-card-address">{request.address_text}</p>
+
+      <div className="dp-addr">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z" />
+          <circle cx="12" cy="10" r="2.5" />
+        </svg>
+        {request.address_text}
+      </div>
 
       {request.status === "pending" && (
-        <div className="request-actions">
-          <button className="btn btn-danger btn-sm" disabled={loading} onClick={cancel}>
-            Cancelar solicitud
-          </button>
-        </div>
+        <>
+          <div className="dp-empty-detail">
+            Buscando el técnico ideal cerca de ti — te avisaremos apenas alguien acepte.
+          </div>
+          <div className="request-actions">
+            <button className="btn btn-danger btn-sm" disabled={loading} onClick={cancel}>
+              Cancelar solicitud
+            </button>
+          </div>
+        </>
       )}
 
-      {request.status === "accepted" ? (
+      {request.status === "accepted" && (
         <>
           <div className="request-interaction">
             <TechnicianLocationMap
@@ -97,7 +128,7 @@ export default function ClientRequestCard({ request }: { request: ClientRequestR
             </div>
           )}
 
-          <form onSubmit={completeAndPay} style={{ marginTop: "16px", display: "flex", gap: "10px" }}>
+          <form onSubmit={completeAndPay} className="dp-pay-row">
             <input
               className="form-input"
               type="number"
@@ -108,28 +139,34 @@ export default function ClientRequestCard({ request }: { request: ClientRequestR
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
             />
-            <button className="btn btn-primary btn-sm" type="submit" disabled={loading}>
+            <button className="btn btn-primary" type="submit" disabled={loading}>
               Pagar y completar
             </button>
           </form>
         </>
-      ) : (
-        <ConversationView requestId={request.id} currentUserId={request.client_id} compact />
       )}
 
-      {request.status === "completed" &&
-        request.technician_id &&
-        (review ? (
-          <a className="panel-action-link" href="/dashboard/resenas" style={{ display: "block" }}>
-            Ya calificaste este servicio — ver en Mis reseñas →
-          </a>
-        ) : (
-          <ReviewForm
-            requestId={request.id}
-            clientId={request.client_id}
-            technicianId={request.technician_id}
-          />
-        ))}
-    </div>
+      {request.status === "completed" && (
+        <>
+          <ConversationView requestId={request.id} currentUserId={request.client_id} compact />
+          {request.technician_id &&
+            (review ? (
+              <div className="form-notice" style={{ marginTop: "16px" }}>
+                ✓ Ya calificaste este servicio — gracias por tu reseña.
+              </div>
+            ) : (
+              <ReviewForm
+                requestId={request.id}
+                clientId={request.client_id}
+                technicianId={request.technician_id}
+              />
+            ))}
+        </>
+      )}
+
+      {request.status === "cancelled" && (
+        <div className="dp-empty-detail">Esta solicitud fue cancelada.</div>
+      )}
+    </>
   );
 }
