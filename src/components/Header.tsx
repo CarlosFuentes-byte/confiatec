@@ -44,13 +44,15 @@ export default function Header({ user }: { user: HeaderUser }) {
             </svg>
             ConfiaTec
           </div>
-          <ul className="nav-links">
-            {NAV_LINKS.map((link) => (
-              <li key={link.href}>
-                <a href={link.href}>{link.label}</a>
-              </li>
-            ))}
-          </ul>
+          {!user && (
+            <ul className="nav-links">
+              {NAV_LINKS.map((link) => (
+                <li key={link.href}>
+                  <a href={link.href}>{link.label}</a>
+                </li>
+              ))}
+            </ul>
+          )}
           <div className="nav-cta">
             {user ? (
               <>
@@ -89,11 +91,12 @@ export default function Header({ user }: { user: HeaderUser }) {
 
       <div className={`scrim ${menuOpen ? "show" : ""}`} onClick={closeMenu}></div>
       <div className={`mobile-panel ${menuOpen ? "open" : ""}`}>
-        {NAV_LINKS.map((link) => (
-          <a key={link.href} href={link.href} onClick={closeMenu}>
-            {link.label}
-          </a>
-        ))}
+        {!user &&
+          NAV_LINKS.map((link) => (
+            <a key={link.href} href={link.href} onClick={closeMenu}>
+              {link.label}
+            </a>
+          ))}
         <a className="btn btn-primary btn-block" href="/buscar" onClick={closeMenu}>
           Buscar técnico
         </a>

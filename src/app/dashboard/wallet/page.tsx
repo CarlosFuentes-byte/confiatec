@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import WalletTopUpForm from "@/components/dashboard/WalletTopUpForm";
+import TechnicianCardForm from "@/components/dashboard/TechnicianCardForm";
 import type { WalletTransaction } from "@/lib/supabase/types";
 
 export const metadata: Metadata = {
@@ -54,10 +55,13 @@ export default async function WalletPage() {
         {profile?.role === "client" ? (
           <WalletTopUpForm />
         ) : (
-          <p className="empty-state-small" style={{ marginBottom: "16px" }}>
-            Tu wallet es un registro de tus pagos recibidos y gastos en ConfiaTec — el saldo
-            crece con los servicios que completas, no se puede recargar manualmente.
-          </p>
+          <>
+            <p className="empty-state-small" style={{ marginBottom: "16px" }}>
+              Tu wallet es un registro de tus pagos recibidos y gastos en ConfiaTec — el saldo
+              crece con los servicios que completas, no se puede recargar manualmente.
+            </p>
+            <TechnicianCardForm />
+          </>
         )}
 
         <h3 style={{ fontSize: "16px", marginBottom: "8px" }}>Historial</h3>
