@@ -86,7 +86,7 @@ export type Message = {
 export type ClientRequestRow = ServiceRequest & {
   technician: Pick<Profile, "full_name"> | null;
   service_categories: Pick<ServiceCategory, "name">;
-  reviews: Pick<Review, "id" | "rating" | "comment">[];
+  reviews: Pick<Review, "id" | "rating" | "comment"> | null;
 };
 
 export type TechnicianRequestRow = ServiceRequest & {

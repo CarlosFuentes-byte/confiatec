@@ -57,7 +57,7 @@ export default function ClientRequestCard({ request }: { request: ClientRequestR
     router.refresh();
   };
 
-  const review = request.reviews?.[0];
+  const review = request.reviews;
   const current = STEP_INDEX[request.status] ?? 0;
   const techName = request.technician?.full_name ?? "Sin asignar";
 
