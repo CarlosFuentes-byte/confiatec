@@ -1,7 +1,7 @@
 import Link from "next/link";
 import HeroSearchCard from "@/components/HeroSearchCard";
+import TechAvatar from "@/components/TechAvatar";
 import { getServiceIcon } from "@/lib/serviceIcons";
-import { getInitials } from "@/lib/initials";
 import type { ServiceCategory, TechnicianListItem } from "@/lib/supabase/types";
 
 const TIMELINE = [
@@ -52,16 +52,6 @@ const CATEGORY_DESC: Record<string, string> = {
   Electrodomésticos: "Reparación de lavadoras, refrigeradoras y más.",
   Albañilería: "Reparaciones menores de construcción y acabados.",
 };
-
-function TechAvatar({ tech, className }: { tech: TechnicianListItem; className: string }) {
-  if (tech.profiles.avatar_url) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src={tech.profiles.avatar_url} alt={tech.profiles.full_name} className={`${className} avatar-img`} />
-    );
-  }
-  return <div className={className}>{getInitials(tech.profiles.full_name)}</div>;
-}
 
 export default function HomeLanding({
   categories,

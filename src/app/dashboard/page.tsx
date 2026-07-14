@@ -7,7 +7,12 @@ import ClientRequestsPanel, {
 import TechnicianRequestsPanel, {
   type TechnicianRequestWithSnippet,
 } from "@/components/dashboard/TechnicianRequestsPanel";
-import type { ClientRequestRow, TechnicianRequestRow } from "@/lib/supabase/types";
+import ClientDiscoverySection from "@/components/dashboard/ClientDiscoverySection";
+import type {
+  ClientRequestRow,
+  TechnicianListItem,
+  TechnicianRequestRow,
+} from "@/lib/supabase/types";
 
 export const metadata: Metadata = {
   title: "Mi panel — ConfiaTec",
@@ -43,7 +48,7 @@ export default async function DashboardPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, city")
     .eq("id", user.id)
     .single();
 
@@ -102,5 +107,32 @@ export default async function DashboardPage() {
     snippet: snippets.get(r.id) ?? (r.status === "pending" ? "Sin técnico asignado todavía" : "Sin mensajes todavía"),
   }));
 
-  return <ClientRequestsPanel requests={withSnippet} />;
+  const technicianColumns =
+    "*, profiles!inner(full_name, city, avatar_url), service_categories(name, icon_slug)";
+
+  const { data: nearbyTechnicians } = await supabase
+    .from("technician_profiles")
+    .select(technicianColumns)
+    .eq("profiles.city", profile?.city ?? "")
+    .order("featured", { ascending: false })
+    .order("rating_avg", { ascending: false })
+    .limit(4);
+
+  const { data: topTechnicians } = await supabase
+    .from("technician_profiles")
+    .select(technicianColumns)
+    .order("featured", { ascending: false })
+    .order("rating_avg", { ascending: false })
+    .order("completed_count", { ascending: false })
+    .limit(3);
+
+  return (
+    <>
+      <ClientRequestsPanel requests={withSnippet} />
+      <ClientDiscoverySection
+        nearby={(nearbyTechnicians as TechnicianListItem[]) ?? []}
+        ranking={(topTechnicians as TechnicianListItem[]) ?? []}
+      />
+    </>
+  );
 }
