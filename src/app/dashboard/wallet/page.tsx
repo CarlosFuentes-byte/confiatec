@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import WalletTopUpForm from "@/components/dashboard/WalletTopUpForm";
@@ -80,9 +81,20 @@ export default async function WalletPage() {
                     })}
                   </div>
                 </div>
-                <div className={`wallet-tx-amount ${tx.amount >= 0 ? "positive" : "negative"}`}>
-                  {tx.amount >= 0 ? "+" : ""}
-                  L. {tx.amount.toFixed(2)}
+                <div style={{ textAlign: "right" }}>
+                  <div className={`wallet-tx-amount ${tx.amount >= 0 ? "positive" : "negative"}`}>
+                    {tx.amount >= 0 ? "+" : ""}
+                    L. {tx.amount.toFixed(2)}
+                  </div>
+                  {tx.service_request_id && (
+                    <Link
+                      className="panel-action-link"
+                      style={{ fontSize: "12.5px", marginTop: "4px" }}
+                      href={`/dashboard/recibo/${tx.service_request_id}`}
+                    >
+                      Ver recibo →
+                    </Link>
+                  )}
                 </div>
               </div>
             ))}

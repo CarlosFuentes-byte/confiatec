@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getInitials } from "@/lib/initials";
 import StaticLocationMap from "./StaticLocationMap";
@@ -155,10 +156,19 @@ export default function TechnicianRequestCard({
       )}
 
       {request.status === "completed" && (
-        <div className="dp-empty-detail">
-          Servicio completado el {new Date(request.created_at).toLocaleDateString("es-HN")}. Buen
-          trabajo.
-        </div>
+        <>
+          <div className="dp-empty-detail">
+            Servicio completado el {new Date(request.created_at).toLocaleDateString("es-HN")}. Buen
+            trabajo.
+          </div>
+          <Link
+            className="panel-action-link"
+            href={`/dashboard/recibo/${request.id}`}
+            style={{ display: "block", textAlign: "center" }}
+          >
+            Ver recibo de pago →
+          </Link>
+        </>
       )}
 
       {request.status === "cancelled" && (

@@ -4,6 +4,8 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
+const UNIQUE_VIOLATION = "23505";
+
 export default function ReviewForm({
   requestId,
   clientId,
@@ -18,9 +20,11 @@ export default function ReviewForm({
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (loading || submitted) return;
     setError(null);
     setLoading(true);
 
@@ -36,12 +40,27 @@ export default function ReviewForm({
     setLoading(false);
 
     if (insertError) {
+      if (insertError.code === UNIQUE_VIOLATION) {
+        // Ya existe una reseña para esta solicitud (doble clic u otra pestaña) — no es un error real.
+        setSubmitted(true);
+        router.refresh();
+        return;
+      }
       setError(insertError.message);
       return;
     }
 
+    setSubmitted(true);
     router.refresh();
   };
+
+  if (submitted) {
+    return (
+      <div className="form-notice" style={{ marginTop: "16px" }}>
+        ✓ Ya calificaste este servicio — gracias por tu reseña.
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} style={{ marginTop: "16px" }}>
@@ -54,6 +73,7 @@ export default function ReviewForm({
             className={`star-btn ${n <= rating ? "active" : ""}`}
             onClick={() => setRating(n)}
             aria-label={`${n} estrellas`}
+            disabled={loading}
           >
             ★
           </button>
@@ -65,6 +85,7 @@ export default function ReviewForm({
           placeholder="¿Cómo te fue con el servicio? (opcional)"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
+          disabled={loading}
         />
       </div>
       <button className="btn btn-primary btn-sm" type="submit" disabled={loading}>

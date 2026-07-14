@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getInitials } from "@/lib/initials";
 import ReviewForm from "./ReviewForm";
@@ -149,6 +150,13 @@ export default function ClientRequestCard({ request }: { request: ClientRequestR
       {request.status === "completed" && (
         <>
           <ConversationView requestId={request.id} currentUserId={request.client_id} compact />
+          <Link
+            className="panel-action-link"
+            href={`/dashboard/recibo/${request.id}`}
+            style={{ display: "block", marginTop: "14px" }}
+          >
+            Ver recibo de pago →
+          </Link>
           {request.technician_id &&
             (review ? (
               <div className="form-notice" style={{ marginTop: "16px" }}>
