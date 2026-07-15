@@ -1,6 +1,7 @@
 import Link from "next/link";
 import HeroSearchCard from "@/components/HeroSearchCard";
 import TechAvatar from "@/components/TechAvatar";
+import NearbyTechniciansMap from "@/components/NearbyTechniciansMap";
 import { getServiceIcon } from "@/lib/serviceIcons";
 import type { ServiceCategory, TechnicianListItem } from "@/lib/supabase/types";
 
@@ -104,7 +105,7 @@ export default function HomeLanding({
                   Quiero ofrecer mis servicios
                 </Link>
               </div>
-              <div className="b-imgph">Foto — técnico en servicio</div>
+              <NearbyTechniciansMap />
             </div>
 
             <div className="b-side">

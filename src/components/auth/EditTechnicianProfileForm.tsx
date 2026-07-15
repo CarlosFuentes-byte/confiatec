@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { CITIES } from "@/lib/cities";
 import { OTHER_CATEGORY_VALUE, resolveCategoryId } from "@/lib/resolveCategory";
 import AvatarUploader from "@/components/AvatarUploader";
+import LocationCaptureButton from "@/components/LocationCaptureButton";
 import type { Profile, ServiceCategory, TechnicianProfile } from "@/lib/supabase/types";
 
 export default function EditTechnicianProfileForm({
@@ -26,6 +27,8 @@ export default function EditTechnicianProfileForm({
   );
   const [customCategory, setCustomCategory] = useState("");
   const [bio, setBio] = useState(technicianProfile.bio ?? "");
+  const [lat, setLat] = useState<number | null>(technicianProfile.lat);
+  const [lng, setLng] = useState<number | null>(technicianProfile.lng);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -62,7 +65,7 @@ export default function EditTechnicianProfileForm({
 
     const { error: technicianError } = await supabase
       .from("technician_profiles")
-      .update({ category_id: resolvedCategoryId, bio })
+      .update({ category_id: resolvedCategoryId, bio, lat, lng })
       .eq("profile_id", profile.id);
 
     setLoading(false);
@@ -186,6 +189,11 @@ export default function EditTechnicianProfileForm({
             onChange={(e) => setBio(e.target.value)}
           />
         </div>
+
+        <LocationCaptureButton
+          hasLocation={lat != null && lng != null}
+          onCapture={(newLat, newLng) => { setLat(newLat); setLng(newLng); }}
+        />
 
         <button className="btn btn-primary btn-block" type="submit" disabled={loading}>
           {loading ? "Guardando..." : "Guardar cambios"}

@@ -40,6 +40,8 @@ export type TechnicianProfile = {
   police_record_url: string | null;
   criminal_record_url: string | null;
   verification_submitted_at: string | null;
+  lat: number | null;
+  lng: number | null;
 };
 
 export type TechnicianListItem = TechnicianProfile & {

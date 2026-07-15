@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { OTHER_CATEGORY_VALUE, resolveCategoryId } from "@/lib/resolveCategory";
 import { fileExtension, getPublicFileUrl, uploadFile } from "@/lib/uploadFile";
+import LocationCaptureButton from "@/components/LocationCaptureButton";
 import type { ServiceCategory } from "@/lib/supabase/types";
 
 export default function CompleteTechnicianProfileForm({
@@ -20,6 +21,8 @@ export default function CompleteTechnicianProfileForm({
   );
   const [customCategory, setCustomCategory] = useState("");
   const [bio, setBio] = useState("");
+  const [lat, setLat] = useState<number | null>(null);
+  const [lng, setLng] = useState<number | null>(null);
   const [selfieFile, setSelfieFile] = useState<File | null>(null);
   const [policeFile, setPoliceFile] = useState<File | null>(null);
   const [criminalFile, setCriminalFile] = useState<File | null>(null);
@@ -88,6 +91,8 @@ export default function CompleteTechnicianProfileForm({
       profile_id: profileId,
       category_id: resolvedCategoryId,
       bio,
+      lat,
+      lng,
       police_record_url: policeRecordPath,
       criminal_record_url: criminalRecordPath,
       verification_submitted_at: new Date().toISOString(),
@@ -219,6 +224,8 @@ export default function CompleteTechnicianProfileForm({
             onChange={(e) => setCriminalFile(e.target.files?.[0] ?? null)}
           />
         </div>
+
+        <LocationCaptureButton onCapture={(newLat, newLng) => { setLat(newLat); setLng(newLng); }} />
 
         <button className="btn btn-primary btn-block" type="submit" disabled={loading}>
           {loading ? "Guardando..." : "Completar perfil"}
