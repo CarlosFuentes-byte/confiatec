@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import ClientRequestCard from "./ClientRequestCard";
-import type { ClientRequestRow } from "@/lib/supabase/types";
+import ServiceSearchCard from "@/components/ServiceSearchCard";
+import { useUserLocation } from "@/lib/useUserLocation";
+import type { ClientRequestRow, ServiceCategory } from "@/lib/supabase/types";
 
 const STATUS_LABEL: Record<string, string> = {
   pending: "Pendiente",
@@ -15,14 +17,26 @@ export type ClientRequestWithSnippet = ClientRequestRow & { snippet: string };
 
 export default function ClientRequestsPanel({
   requests,
+  categories,
 }: {
   requests: ClientRequestWithSnippet[];
+  categories: ServiceCategory[];
 }) {
   const [selectedId, setSelectedId] = useState<string | null>(requests[0]?.id ?? null);
   const selected = requests.find((r) => r.id === selectedId) ?? null;
+  const location = useUserLocation();
 
   return (
     <>
+      <div style={{ maxWidth: "420px", marginBottom: "40px" }}>
+        <ServiceSearchCard
+          categories={categories}
+          hasLocation={location.status === "ready" && !!location.position}
+          locationStatus={location.status}
+          onActivateLocation={location.activar}
+        />
+      </div>
+
       <div className="dp-headrow">
         <div>
           <span className="eyebrow">Mi panel</span>

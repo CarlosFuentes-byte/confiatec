@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import HeroSearchCard from "@/components/HeroSearchCard";
 import TechAvatar from "@/components/TechAvatar";
 import NearbyTechniciansMap from "@/components/NearbyTechniciansMap";
 import { getServiceIcon } from "@/lib/serviceIcons";
@@ -102,7 +101,7 @@ export default function HomeLanding({
                 antecedentes revisados, ubicación en vivo y reseñas reales.
               </p>
               <div className="b-ctas">
-                <Link className="btn btn-primary" href="#buscar">
+                <Link className="btn btn-primary" href="/buscar">
                   Buscar técnico verificado
                 </Link>
                 <Link className="btn btn-ghost" href="#tecnicos">
@@ -118,13 +117,6 @@ export default function HomeLanding({
             </div>
 
             <div className="b-side">
-              <HeroSearchCard
-                categories={visibleCategories}
-                hasLocation={location.status === "ready" && !!location.position}
-                locationStatus={location.status}
-                onActivateLocation={location.activar}
-              />
-
               <div className="b-card">
                 <h4>Vista previa · Panel técnico</h4>
                 {previewTechnicians.length > 0 ? (

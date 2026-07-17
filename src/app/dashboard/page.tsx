@@ -10,6 +10,7 @@ import TechnicianRequestsPanel, {
 import ClientDiscoverySection from "@/components/dashboard/ClientDiscoverySection";
 import type {
   ClientRequestRow,
+  ServiceCategory,
   TechnicianListItem,
   TechnicianRequestRow,
 } from "@/lib/supabase/types";
@@ -126,9 +127,17 @@ export default async function DashboardPage() {
     .order("completed_count", { ascending: false })
     .limit(3);
 
+  const { data: categories } = await supabase
+    .from("service_categories")
+    .select("id, name, icon_slug")
+    .order("id");
+
   return (
     <>
-      <ClientRequestsPanel requests={withSnippet} />
+      <ClientRequestsPanel
+        requests={withSnippet}
+        categories={(categories as ServiceCategory[]) ?? []}
+      />
       <ClientDiscoverySection
         nearby={(nearbyTechnicians as TechnicianListItem[]) ?? []}
         ranking={(topTechnicians as TechnicianListItem[]) ?? []}

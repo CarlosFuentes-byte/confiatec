@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { LocationStatus } from "@/lib/useUserLocation";
 import type { ServiceCategory } from "@/lib/supabase/types";
 
-export default function HeroSearchCard({
+export default function ServiceSearchCard({
   categories,
   hasLocation,
   locationStatus,
@@ -49,7 +49,7 @@ export default function HeroSearchCard({
 
   return (
     <>
-      <div className="b-card" id="buscar">
+      <div className="b-card">
         <h4>¿Qué servicio necesitas hoy?</h4>
         <div className="b-chip-row">
           {categories.map((cat) => (
