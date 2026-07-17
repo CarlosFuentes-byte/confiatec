@@ -178,6 +178,10 @@ export default function HomeLanding({
           <div className="sec-head" style={{ marginBottom: "28px" }}>
             <span className="eyebrow">Servicios</span>
             <h2>Oficios calificados, un solo lugar para encontrarlos.</h2>
+            <p>
+              Estos son algunos de los oficios más buscados — pero no nos limitamos a
+              ellos. Aceptamos técnicos verificados de cualquier oficio o trabajo manual.
+            </p>
           </div>
           <div className="b-svc-grid">
             {bentoCategories.map((cat, i) => (
@@ -194,6 +198,12 @@ export default function HomeLanding({
               </Link>
             ))}
           </div>
+          <p style={{ marginTop: "20px", fontSize: "14px", color: "var(--text-muted)" }}>
+            ¿Tu oficio no está en la lista?{" "}
+            <Link href="/tecnicos/unirse" style={{ color: "var(--gold)", fontWeight: 600 }}>
+              Únete de todas formas →
+            </Link>
+          </p>
         </div>
       </section>
 
@@ -201,7 +211,7 @@ export default function HomeLanding({
         <div className="wrap b-tz-grid">
           <div>
             <span className="b-tz-badge">Zona técnico</span>
-            <h2>¿Eres electricista, fontanero o barbero? Sé fundador, no solo usuario.</h2>
+            <h2>¿Tienes un oficio? Sé fundador, no solo usuario.</h2>
             <ul className="b-tz-list">
               {TECH_BENEFITS.map((benefit) => (
                 <li key={benefit}>
