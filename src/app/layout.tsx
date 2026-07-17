@@ -27,7 +27,7 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "ConfiaTec — Tu técnico verificado, en minutos y a tu puerta",
   description:
-    "ConfiaTec conecta hogares con electricistas, fontaneros y barberos verificados en San Pedro Sula y Tegucigalpa. Antecedentes revisados, ubicación en vivo y reseñas reales.",
+    "ConfiaTec conecta hogares con electricistas, fontaneros, barberos y otros trabajadores de oficio verificados en San Pedro Sula y Tegucigalpa. Antecedentes revisados, ubicación en vivo y reseñas reales.",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
