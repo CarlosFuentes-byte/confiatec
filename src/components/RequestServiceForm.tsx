@@ -52,7 +52,7 @@ export default function RequestServiceForm({
       client_id: clientId,
       technician_id: technicianId,
       category_id: categoryId,
-      address_text: address,
+      address_text: address.trim() || "Ubicación compartida por GPS",
       client_lat: coords?.lat ?? null,
       client_lng: coords?.lng ?? null,
     });
@@ -89,13 +89,13 @@ export default function RequestServiceForm({
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label className="form-label" htmlFor="address">
-            Tu colonia o dirección
+            Tu colonia o dirección{coords && " (opcional — ya compartiste tu ubicación)"}
           </label>
           <input
             id="address"
             className="form-input"
             type="text"
-            required
+            required={!coords}
             value={address}
             onChange={(e) => setAddress(e.target.value)}
           />
