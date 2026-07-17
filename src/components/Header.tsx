@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { href: "/#tecnicos", label: "Para técnicos" },
   { href: "/#confianza", label: "Seguridad" },
   { href: "/precios", label: "Precios" },
+  { href: "/soporte", label: "Soporte Técnico" },
 ];
 
 type HeaderUser = { id: string; role: "client" | "technician" | null } | null;

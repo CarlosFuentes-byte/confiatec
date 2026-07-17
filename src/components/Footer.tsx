@@ -1,12 +1,13 @@
 const PRODUCT_LINKS = [
-  { href: "#como-funciona", label: "Cómo funciona" },
-  { href: "#servicios", label: "Servicios" },
-  { href: "#confianza", label: "Seguridad" },
+  { href: "/#como-funciona", label: "Cómo funciona" },
+  { href: "/#servicios", label: "Servicios" },
+  { href: "/#confianza", label: "Seguridad" },
   { href: "/precios", label: "Precios" },
+  { href: "/soporte", label: "Soporte Técnico" },
   { href: "/terminos", label: "Términos y condiciones" },
 ];
 
-const FOUNDERS = [
+export const FOUNDERS = [
   "Amilcar García — CEO",
   "Carlos Adely Pérez — CTO",
   "Carlos Fuentes — CMO",

@@ -98,7 +98,7 @@ export default function HomeLanding({
                 Tu técnico <em>verificado</em>, en minutos y a tu puerta.
               </h1>
               <p className="b-lead">
-                ConfiaTec conecta hogares con electricistas, fontaneros y barberos verificados —
+                ConfiaTec conecta hogares con electricistas, fontaneros, barberos y otros trabajadores de oficio verificados —
                 antecedentes revisados, ubicación en vivo y reseñas reales.
               </p>
               <div className="b-ctas">
