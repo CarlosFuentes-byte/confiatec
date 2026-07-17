@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 import { createClient } from "@/lib/supabase/client";
+import type { LocationStatus } from "@/lib/useUserLocation";
 import type { TechnicianListItem } from "@/lib/supabase/types";
 
 type NearbyTechnician = TechnicianListItem & { distanceKm: number };
@@ -18,52 +19,50 @@ function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number) {
   return R * 2 * Math.asin(Math.sqrt(a));
 }
 
-export default function NearbyTechniciansMap() {
-  const [status, setStatus] = useState<"idle" | "locating" | "error" | "ready">("idle");
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null);
+export default function NearbyTechniciansMap({
+  status,
+  error,
+  position,
+  onActivate,
+}: {
+  status: LocationStatus;
+  error: string | null;
+  position: { lat: number; lng: number } | null;
+  onActivate: () => void;
+}) {
   const [nearby, setNearby] = useState<NearbyTechnician[]>([]);
 
-  const activar = () => {
-    if (!("geolocation" in navigator)) {
-      setStatus("error");
-      setErrorMsg("Tu navegador no soporta geolocalización.");
-      return;
-    }
-    setStatus("locating");
-    setErrorMsg(null);
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const here = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+  useEffect(() => {
+    if (status !== "ready" || !position) return;
+    let cancelled = false;
 
-        const supabase = createClient();
-        const { data } = await supabase
-          .from("technician_profiles")
-          .select(
-            "*, profiles!inner(full_name, city, avatar_url), service_categories(name, icon_slug)"
-          )
-          .not("lat", "is", null)
-          .not("lng", "is", null);
+    (async () => {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("technician_profiles")
+        .select(
+          "*, profiles!inner(full_name, city, avatar_url), service_categories(name, icon_slug)"
+        )
+        .not("lat", "is", null)
+        .not("lng", "is", null);
 
-        const withDistance = ((data as TechnicianListItem[]) ?? [])
-          .map((t) => ({
-            ...t,
-            distanceKm: haversineKm(here.lat, here.lng, t.lat!, t.lng!),
-          }))
-          .sort((a, b) => a.distanceKm - b.distanceKm)
-          .slice(0, 6);
+      if (cancelled) return;
 
-        setPosition(here);
-        setNearby(withDistance);
-        setStatus("ready");
-      },
-      () => {
-        setStatus("error");
-        setErrorMsg("No pudimos acceder a tu ubicación. Actívala en tu navegador e intenta de nuevo.");
-      },
-      { enableHighAccuracy: true }
-    );
-  };
+      const withDistance = ((data as TechnicianListItem[]) ?? [])
+        .map((t) => ({
+          ...t,
+          distanceKm: haversineKm(position.lat, position.lng, t.lat!, t.lng!),
+        }))
+        .sort((a, b) => a.distanceKm - b.distanceKm)
+        .slice(0, 6);
+
+      setNearby(withDistance);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [status, position]);
 
   if (status === "ready" && position) {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -97,12 +96,12 @@ export default function NearbyTechniciansMap() {
 
   return (
     <div className="b-imgph">
-      <button className="btn btn-primary" onClick={activar} disabled={status === "locating"}>
+      <button className="btn btn-primary" onClick={onActivate} disabled={status === "locating"}>
         {status === "locating" ? "Buscando tu ubicación..." : "Activar mi ubicación"}
       </button>
       {status === "error" && (
         <p className="location-error" style={{ marginTop: "10px" }}>
-          {errorMsg}
+          {error}
         </p>
       )}
     </div>

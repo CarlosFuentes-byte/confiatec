@@ -1,8 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import HeroSearchCard from "@/components/HeroSearchCard";
 import TechAvatar from "@/components/TechAvatar";
 import NearbyTechniciansMap from "@/components/NearbyTechniciansMap";
 import { getServiceIcon } from "@/lib/serviceIcons";
+import { useUserLocation } from "@/lib/useUserLocation";
 import type { ServiceCategory, TechnicianListItem } from "@/lib/supabase/types";
 
 const TIMELINE = [
@@ -65,6 +68,7 @@ export default function HomeLanding({
   const bentoCategories = visibleCategories.slice(0, 5);
   const previewTechnicians = technicians.slice(0, 2);
   const rankedTechnicians = technicians.slice(0, 3);
+  const location = useUserLocation();
 
   return (
     <main>
@@ -105,11 +109,21 @@ export default function HomeLanding({
                   Quiero ofrecer mis servicios
                 </Link>
               </div>
-              <NearbyTechniciansMap />
+              <NearbyTechniciansMap
+                status={location.status}
+                error={location.error}
+                position={location.position}
+                onActivate={location.activar}
+              />
             </div>
 
             <div className="b-side">
-              <HeroSearchCard categories={visibleCategories} />
+              <HeroSearchCard
+                categories={visibleCategories}
+                hasLocation={location.status === "ready" && !!location.position}
+                locationStatus={location.status}
+                onActivateLocation={location.activar}
+              />
 
               <div className="b-card">
                 <h4>Vista previa · Panel técnico</h4>

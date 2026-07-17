@@ -2,9 +2,20 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import type { LocationStatus } from "@/lib/useUserLocation";
 import type { ServiceCategory } from "@/lib/supabase/types";
 
-export default function HeroSearchCard({ categories }: { categories: ServiceCategory[] }) {
+export default function HeroSearchCard({
+  categories,
+  hasLocation,
+  locationStatus,
+  onActivateLocation,
+}: {
+  categories: ServiceCategory[];
+  hasLocation: boolean;
+  locationStatus: LocationStatus;
+  onActivateLocation: () => Promise<{ lat: number; lng: number } | null>;
+}) {
   const router = useRouter();
   const [activeCategoryId, setActiveCategoryId] = useState(categories[0]?.id ?? null);
   const [address, setAddress] = useState("");
@@ -17,13 +28,23 @@ export default function HeroSearchCard({ categories }: { categories: ServiceCate
     toastTimeout.current = setTimeout(() => setToast((t) => ({ ...t, show: false })), 3200);
   };
 
-  const handleSearch = () => {
-    if (!address.trim()) {
-      showToast("Escribe tu dirección para buscar técnicos cerca de ti");
-      return;
-    }
+  const goToBuscar = () => {
     const query = activeCategoryId ? `?category=${activeCategoryId}` : "";
     router.push(`/buscar${query}`);
+  };
+
+  const handleSearch = async () => {
+    if (hasLocation || address.trim()) {
+      goToBuscar();
+      return;
+    }
+
+    const coords = await onActivateLocation();
+    if (coords) {
+      goToBuscar();
+    } else {
+      showToast("No pudimos detectar tu ubicación. Escribe tu dirección para buscar.");
+    }
   };
 
   return (
@@ -41,16 +62,26 @@ export default function HeroSearchCard({ categories }: { categories: ServiceCate
             </div>
           ))}
         </div>
-        <div className="b-field">
-          <input
-            type="text"
-            placeholder="Tu colonia o dirección"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-          />
-        </div>
-        <button className="btn btn-primary btn-block" onClick={handleSearch}>
-          Buscar
+        {hasLocation ? (
+          <p style={{ fontSize: "12.5px", color: "var(--green)", marginBottom: "12px" }}>
+            ✓ Usando tu ubicación actual
+          </p>
+        ) : (
+          <div className="b-field">
+            <input
+              type="text"
+              placeholder="Tu colonia o dirección"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
+          </div>
+        )}
+        <button
+          className="btn btn-primary btn-block"
+          onClick={handleSearch}
+          disabled={locationStatus === "locating"}
+        >
+          {locationStatus === "locating" ? "Buscando tu ubicación..." : "Buscar"}
         </button>
       </div>
       <div className={`toast ${toast.show ? "show" : ""}`}>{toast.message}</div>
