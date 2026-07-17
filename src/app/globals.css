@@ -95,10 +95,20 @@ header{
 .logo{
   display:flex;align-items:center;gap:10px;
   font-family:var(--font-space-grotesk), sans-serif;font-weight:700;font-size:20px;
+  text-decoration:none;color:inherit;
 }
 .logo-mark{
   width:30px;height:30px;flex-shrink:0;
 }
+.nav-left{display:flex;align-items:center;gap:12px;min-width:0;}
+.back-btn{
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:34px;height:34px;border-radius:50%;
+  border:1px solid var(--line);background:transparent;color:var(--text-light);
+  cursor:pointer;padding:0;
+}
+.back-btn:hover{border-color:var(--gold);color:var(--gold);}
+.back-btn svg{width:17px;height:17px;}
 .nav-links{
   display:flex;align-items:center;gap:32px;
   list-style:none;margin:0;padding:0;

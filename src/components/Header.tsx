@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 const NAV_LINKS = [
-  { href: "#como-funciona", label: "Cómo funciona" },
-  { href: "#servicios", label: "Servicios" },
-  { href: "#tecnicos", label: "Para técnicos" },
-  { href: "#confianza", label: "Seguridad" },
+  { href: "/#como-funciona", label: "Cómo funciona" },
+  { href: "/#servicios", label: "Servicios" },
+  { href: "/#tecnicos", label: "Para técnicos" },
+  { href: "/#confianza", label: "Seguridad" },
   { href: "/precios", label: "Precios" },
 ];
 
@@ -16,6 +17,7 @@ type HeaderUser = { id: string; role: "client" | "technician" | null } | null;
 
 export default function Header({ user }: { user: HeaderUser }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
 
@@ -31,24 +33,33 @@ export default function Header({ user }: { user: HeaderUser }) {
     <>
       <header>
         <nav className="nav">
-          <div className="logo">
-            <svg className="logo-mark" viewBox="0 0 32 32" fill="none">
-              <circle cx="16" cy="16" r="15" stroke="#F2A93B" strokeWidth="2" />
-              <path
-                d="M9 16.5L13.5 21L23 10"
-                stroke="#F2A93B"
-                strokeWidth="2.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            ConfiaTec
+          <div className="nav-left">
+            {pathname !== "/" && (
+              <button className="back-btn" onClick={() => router.back()} aria-label="Volver">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
+            )}
+            <Link className="logo" href="/">
+              <svg className="logo-mark" viewBox="0 0 32 32" fill="none">
+                <circle cx="16" cy="16" r="15" stroke="#F2A93B" strokeWidth="2" />
+                <path
+                  d="M9 16.5L13.5 21L23 10"
+                  stroke="#F2A93B"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              ConfiaTec
+            </Link>
           </div>
           {!user && (
             <ul className="nav-links">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
-                  <a href={link.href}>{link.label}</a>
+                  <Link href={link.href}>{link.label}</Link>
                 </li>
               ))}
             </ul>
@@ -56,26 +67,26 @@ export default function Header({ user }: { user: HeaderUser }) {
           <div className="nav-cta">
             {user ? (
               <>
-                <a className="btn btn-ghost" href="/dashboard">
+                <Link className="btn btn-ghost" href="/dashboard">
                   Mi panel
-                </a>
+                </Link>
                 <button className="btn btn-ghost" onClick={handleLogout}>
                   Cerrar sesión
                 </button>
               </>
             ) : (
               <>
-                <a className="btn btn-ghost" href="/login">
+                <Link className="btn btn-ghost" href="/login">
                   Iniciar sesión
-                </a>
-                <a className="btn btn-ghost" href="#tecnicos">
+                </Link>
+                <Link className="btn btn-ghost" href="/#tecnicos">
                   Soy técnico
-                </a>
+                </Link>
               </>
             )}
-            <a className="btn btn-primary" href="/buscar">
+            <Link className="btn btn-primary" href="/buscar">
               Buscar técnico
-            </a>
+            </Link>
             <button
               className="burger"
               aria-label="Abrir menú"
@@ -93,26 +104,26 @@ export default function Header({ user }: { user: HeaderUser }) {
       <div className={`mobile-panel ${menuOpen ? "open" : ""}`}>
         {!user &&
           NAV_LINKS.map((link) => (
-            <a key={link.href} href={link.href} onClick={closeMenu}>
+            <Link key={link.href} href={link.href} onClick={closeMenu}>
               {link.label}
-            </a>
+            </Link>
           ))}
-        <a className="btn btn-primary btn-block" href="/buscar" onClick={closeMenu}>
+        <Link className="btn btn-primary btn-block" href="/buscar" onClick={closeMenu}>
           Buscar técnico
-        </a>
+        </Link>
         {user ? (
           <>
-            <a className="btn btn-ghost btn-block" href="/dashboard" onClick={closeMenu}>
+            <Link className="btn btn-ghost btn-block" href="/dashboard" onClick={closeMenu}>
               Mi panel
-            </a>
+            </Link>
             <button className="btn btn-ghost btn-block" onClick={handleLogout}>
               Cerrar sesión
             </button>
           </>
         ) : (
-          <a className="btn btn-ghost btn-block" href="/login" onClick={closeMenu}>
+          <Link className="btn btn-ghost btn-block" href="/login" onClick={closeMenu}>
             Iniciar sesión
-          </a>
+          </Link>
         )}
       </div>
     </>
