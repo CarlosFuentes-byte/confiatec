@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import RevealObserver from "@/components/RevealObserver";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { createClient } from "@/lib/supabase/server";
 
 const spaceGrotesk = Space_Grotesk({
@@ -69,6 +70,7 @@ export default async function RootLayout({
         {children}
         <Footer />
         <RevealObserver />
+        <ServiceWorkerRegister />
       </body>
     </html>
   );
