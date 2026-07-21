@@ -1,3 +1,8 @@
+import QRCode from "qrcode";
+
+const INSTAGRAM_HANDLE = "confiatechn";
+const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
+
 const PRODUCT_LINKS = [
   { href: "/#como-funciona", label: "Cómo funciona" },
   { href: "/#servicios", label: "Servicios" },
@@ -13,7 +18,13 @@ export const FOUNDERS = [
   "Carlos Fuentes — CMO",
 ];
 
-export default function Footer() {
+export default async function Footer() {
+  const qrSvg = await QRCode.toString(INSTAGRAM_URL, {
+    type: "svg",
+    margin: 0,
+    color: { dark: "#0B1E27", light: "#FFFFFF" },
+  });
+
   return (
     <footer>
       <div className="wrap">
@@ -37,18 +48,18 @@ export default function Footer() {
               técnicos verificados de oficios — con antecedentes revisados,
               ubicación en vivo y reseñas reales.
             </p>
-            <div className="store-badges">
-              <div className="store-badge">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M17.5 2c.13 1.1-.32 2.2-1 3-.7.85-1.85 1.5-2.95 1.4-.15-1.05.37-2.15 1.05-2.9.75-.85 2-1.45 2.9-1.5zM20.9 17.6c-.5 1.15-1.1 2.25-2 3.25-.85.95-1.85 1.9-3.05 1.9-1.15 0-1.55-.7-2.95-.7s-1.85.7-2.95.7c-1.2 0-2.25-1-3.1-2-1.75-2.05-3.1-5.8-1.3-8.4.9-1.3 2.45-2.1 4.05-2.1 1.15 0 2.2.75 2.95.75.7 0 2-.9 3.4-.75.6.02 2.25.25 3.3 1.85-.1.05-2 1.15-1.95 3.4.02 2.7 2.35 3.6 2.6 3.7z" />
-                </svg>
-                App Store
-              </div>
-              <div className="store-badge">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M3 3.5v17c0 .3.15.6.4.75l9.6-9.25L3.4 2.75c-.25.15-.4.4-.4.75zM14 12l2.75-2.65 3.4 1.95c.55.3.55 1.1 0 1.4l-3.4 1.95zM13.3 12.7l-9.6 9.25c.1.05.2.05.3.05.2 0 .4-.05.55-.15l10.9-6.3zM13.3 11.3l1.85-1.8-10.9-6.3c-.15-.1-.35-.15-.55-.15-.1 0-.2 0-.3.05z" />
-                </svg>
-                Google Play
+            <div className="footer-instagram">
+              <p className="footer-instagram-label">Síguenos en Instagram</p>
+              <div className="footer-instagram-row">
+                <div className="footer-qr" dangerouslySetInnerHTML={{ __html: qrSvg }} />
+                <a
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="footer-instagram-handle"
+                >
+                  @{INSTAGRAM_HANDLE}
+                </a>
               </div>
             </div>
           </div>
